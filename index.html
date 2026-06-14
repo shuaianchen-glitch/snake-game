@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="在线贪吃蛇小游戏，支持手机和电脑，多种难度可选。">
+  <meta name="theme-color" content="#0f1419">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta property="og:title" content="贪吃蛇">
+  <meta property="og:description" content="来挑战一下，看看你能得多少分！">
+  <meta property="og:type" content="website">
+  <title>贪吃蛇</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🐍 贪吃蛇</h1>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">得分</span>
+          <span id="score" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">最高</span>
+          <span id="high-score" class="stat-value">0</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="game-area">
+      <canvas id="game" width="400" height="400" aria-label="贪吃蛇游戏区域"></canvas>
+
+      <div id="overlay" class="overlay">
+        <div class="overlay-content">
+          <h2 id="overlay-title">贪吃蛇</h2>
+          <p id="overlay-message">选择设置后开始游戏</p>
+
+          <div class="settings">
+            <label class="setting">
+              <span>难度</span>
+              <select id="difficulty">
+                <option value="easy">简单</option>
+                <option value="normal" selected>普通</option>
+                <option value="hard">困难</option>
+              </select>
+            </label>
+            <label class="setting toggle">
+              <span>穿墙模式</span>
+              <input type="checkbox" id="wrap-mode">
+            </label>
+            <label class="setting toggle">
+              <span>音效</span>
+              <input type="checkbox" id="sound-enabled" checked>
+            </label>
+          </div>
+
+          <button id="start-btn" class="btn">开始游戏</button>
+          <p id="play-url" class="play-url hidden"></p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="controls">
+      <p class="hint">方向键 / WASD 移动 · 空格暂停</p>
+      <p class="mobile-hint">滑动屏幕或点击下方按钮控制方向</p>
+      <div class="touch-controls" aria-hidden="true">
+        <button class="touch-btn" data-dir="up" aria-label="向上">▲</button>
+        <div class="touch-row">
+          <button class="touch-btn" data-dir="left" aria-label="向左">◀</button>
+          <button class="touch-btn" data-dir="down" aria-label="向下">▼</button>
+          <button class="touch-btn" data-dir="right" aria-label="向右">▶</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
