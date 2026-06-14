@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -12,6 +13,14 @@
   --muted: #8899aa;
   --accent: #4ade80;
   --accent-glow: rgba(74, 222, 128, 0.35);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -35,9 +44,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   max-width: 440px;
   width: 100%;
+  height: 100%;
+  max-height: 900px;
 }
 
 .header {
@@ -45,6 +56,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
+  padding-top: var(--safe-top);
 }
 
 .header h1 {
@@ -80,6 +93,12 @@ body {
 
 .game-area {
   position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 12px;
   overflow: hidden;
   box-shadow:
@@ -91,9 +110,7 @@ body {
 #game {
   display: block;
   background: var(--surface);
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
+  touch-action: none;
 }
 
 .overlay {
@@ -102,10 +119,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 20, 25, 0.88);
+  background: rgba(15, 20, 25, 0.92);
   backdrop-filter: blur(4px);
   transition: opacity 0.2s;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .overlay.hidden {
@@ -115,7 +133,7 @@ body {
 
 .overlay-content {
   text-align: center;
-  padding: 1.5rem;
+  padding: 1.25rem;
   width: 100%;
   max-width: 320px;
 }
@@ -161,8 +179,8 @@ body {
 }
 
 .setting.toggle input {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   accent-color: var(--accent);
   cursor: pointer;
 }
@@ -171,22 +189,16 @@ body {
   background: var(--accent);
   color: #0f1419;
   border: none;
-  padding: 0.65rem 2rem;
+  padding: 0.75rem 2rem;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
   width: 100%;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--accent-glow);
-}
-
 .btn:active {
-  transform: translateY(0);
+  opacity: 0.85;
 }
 
 .play-url {
@@ -209,6 +221,8 @@ body {
 .controls {
   width: 100%;
   text-align: center;
+  flex-shrink: 0;
+  padding-bottom: var(--safe-bottom);
 }
 
 .hint,
@@ -224,37 +238,87 @@ body {
 
 .touch-controls {
   display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
 }
 
-.touch-row {
-  display: flex;
-  gap: 0.35rem;
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 68px);
+  grid-template-rows: repeat(3, 68px);
+  gap: 8px;
 }
 
 .touch-btn {
-  width: 56px;
-  height: 56px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
-  border-radius: 10px;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  font-size: 1.25rem;
   cursor: pointer;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .touch-btn:active {
   background: var(--border);
+  transform: scale(0.96);
+}
+
+.touch-btn[data-dir="up"] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.touch-btn[data-dir="left"] {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.touch-btn[data-dir="down"] {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.touch-btn[data-dir="right"] {
+  grid-column: 3;
+  grid-row: 2;
 }
 
 @media (hover: none) and (pointer: coarse), (max-width: 768px) {
-  .touch-controls {
-    display: flex;
+  body {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .container {
+    max-width: none;
+    max-height: none;
+    height: 100dvh;
+    gap: 0.5rem;
+    padding: 0 12px 8px;
+  }
+
+  .header h1 {
+    font-size: 1.15rem;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .game-area {
+    box-shadow: 0 0 0 1px var(--border);
+    border-radius: 10px;
+  }
+
+  .overlay {
+    backdrop-filter: none;
+  }
+
+  .overlay-content h2 {
+    font-size: 1.5rem;
   }
 
   .hint {
@@ -263,13 +327,17 @@ body {
 
   .mobile-hint {
     display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
   }
 
-  .container {
-    gap: 0.75rem;
+  .touch-controls {
+    display: flex;
   }
 
-  .header h1 {
-    font-size: 1.25rem;
+  .dpad {
+    grid-template-columns: repeat(3, min(22vw, 72px));
+    grid-template-rows: repeat(3, min(22vw, 72px));
+    gap: 6px;
   }
 }

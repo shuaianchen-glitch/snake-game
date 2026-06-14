@@ -30,7 +30,7 @@
     </header>
 
     <main class="game-area">
-      <canvas id="game" width="400" height="400" aria-label="贪吃蛇游戏区域"></canvas>
+      <canvas id="game" aria-label="贪吃蛇游戏区域"></canvas>
 
       <div id="overlay" class="overlay">
         <div class="overlay-content">
@@ -66,8 +66,8 @@
       <p class="hint">方向键 / WASD 移动 · 空格暂停</p>
       <p class="mobile-hint">滑动屏幕或点击下方按钮控制方向</p>
       <div class="touch-controls" aria-hidden="true">
-        <button class="touch-btn" data-dir="up" aria-label="向上">▲</button>
-        <div class="touch-row">
+        <div class="dpad">
+          <button class="touch-btn" data-dir="up" aria-label="向上">▲</button>
           <button class="touch-btn" data-dir="left" aria-label="向左">◀</button>
           <button class="touch-btn" data-dir="down" aria-label="向下">▼</button>
           <button class="touch-btn" data-dir="right" aria-label="向右">▶</button>

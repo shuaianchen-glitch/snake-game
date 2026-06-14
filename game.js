@@ -1,5 +1,5 @@
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false });
 const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("high-score");
 const overlay = document.getElementById("overlay");
@@ -12,12 +12,13 @@ const soundEnabledEl = document.getElementById("sound-enabled");
 const playUrlEl = document.getElementById("play-url");
 
 const GRID = 20;
-const CELL = canvas.width / GRID;
+const isMobile =
+  window.matchMedia("(max-width: 768px), (hover: none) and (pointer: coarse)").matches;
 
 const DIFFICULTY = {
-  easy: { baseSpeed: 180, minSpeed: 100, label: "\u7b80\u5355" },
-  normal: { baseSpeed: 140, minSpeed: 70, label: "\u666e\u901a" },
-  hard: { baseSpeed: 100, minSpeed: 50, label: "\u56f0\u96be" },
+  easy: { baseSpeed: 200, minSpeed: 120, label: "\u7b80\u5355" },
+  normal: { baseSpeed: 160, minSpeed: 90, label: "\u666e\u901a" },
+  hard: { baseSpeed: 120, minSpeed: 70, label: "\u56f0\u96be" },
 };
 
 const DIRECTIONS = {
@@ -33,7 +34,6 @@ const DIRECTIONS = {
 
 let snake, direction, nextDirection, food, score, highScore;
 let gameLoop = null;
-let lastTick = 0;
 let baseSpeed = DIFFICULTY.normal.baseSpeed;
 let minSpeed = DIFFICULTY.normal.minSpeed;
 let speed = baseSpeed;
@@ -41,6 +41,11 @@ let wrapMode = false;
 let soundEnabled = true;
 let audioCtx = null;
 let state = "idle";
+
+let logicalSize = 400;
+let cellSize = logicalSize / GRID;
+let bgCanvas = null;
+let bgCtx = null;
 
 function loadSettings() {
   const saved = JSON.parse(localStorage.getItem("snake-settings") || "{}");
@@ -117,6 +122,61 @@ function applySettings() {
   wrapMode = wrapModeEl.checked;
   soundEnabled = soundEnabledEl.checked;
   saveSettings();
+  rebuildBackground();
+}
+
+function getCanvasSize() {
+  const area = canvas.parentElement;
+  const maxWidth = area.clientWidth;
+  const reservedHeight = isMobile ? 240 : 180;
+  const maxHeight = Math.max(220, window.innerHeight - reservedHeight);
+  return Math.floor(Math.min(maxWidth, maxHeight, 480));
+}
+
+function setupCanvas() {
+  logicalSize = getCanvasSize();
+  cellSize = logicalSize / GRID;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
+  const pixelSize = Math.floor(logicalSize * dpr);
+
+  canvas.width = pixelSize;
+  canvas.height = pixelSize;
+  canvas.style.width = logicalSize + "px";
+  canvas.style.height = logicalSize + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  rebuildBackground();
+}
+
+function rebuildBackground() {
+  bgCanvas = document.createElement("canvas");
+  bgCanvas.width = canvas.width;
+  bgCanvas.height = canvas.height;
+  bgCtx = bgCanvas.getContext("2d", { alpha: false });
+  bgCtx.setTransform(canvas.width / logicalSize, 0, 0, canvas.height / logicalSize, 0, 0);
+
+  bgCtx.fillStyle = "#1a2332";
+  bgCtx.fillRect(0, 0, logicalSize, logicalSize);
+
+  if (!isMobile) {
+    bgCtx.strokeStyle = wrapMode ? "rgba(74, 222, 128, 0.15)" : "rgba(45, 58, 79, 0.4)";
+    bgCtx.lineWidth = 0.5;
+    bgCtx.beginPath();
+    for (let i = 0; i <= GRID; i++) {
+      const pos = i * cellSize;
+      bgCtx.moveTo(pos, 0);
+      bgCtx.lineTo(pos, logicalSize);
+      bgCtx.moveTo(0, pos);
+      bgCtx.lineTo(logicalSize, pos);
+    }
+    bgCtx.stroke();
+  } else if (wrapMode) {
+    bgCtx.strokeStyle = "rgba(74, 222, 128, 0.2)";
+    bgCtx.lineWidth = 2;
+    bgCtx.strokeRect(1, 1, logicalSize - 2, logicalSize - 2);
+  }
 }
 
 function initGame() {
@@ -201,7 +261,12 @@ function tick() {
   if (head.x === food.x && head.y === food.y) {
     score += 10;
     scoreEl.textContent = score;
-    speed = Math.max(minSpeed, baseSpeed - Math.floor(score / 30) * 10);
+    const nextSpeed = Math.max(minSpeed, baseSpeed - Math.floor(score / 30) * 8);
+    if (nextSpeed !== speed) {
+      speed = nextSpeed;
+      restartLoop();
+      return;
+    }
     playEatSound();
     spawnFood();
   } else {
@@ -209,103 +274,86 @@ function tick() {
   }
 }
 
-function drawCell(x, y, color, glow) {
-  const pad = 1;
-  const px = x * CELL + pad;
-  const py = y * CELL + pad;
-  const size = CELL - pad * 2;
-
-  if (glow) {
-    ctx.shadowColor = glow;
-    ctx.shadowBlur = 8;
-  }
+function drawCell(x, y, color) {
+  const pad = isMobile ? 0.5 : 1;
+  const px = x * cellSize + pad;
+  const py = y * cellSize + pad;
+  const size = cellSize - pad * 2;
 
   ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.roundRect(px, py, size, size, 3);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-}
-
-function drawGrid() {
-  ctx.fillStyle = "#1a2332";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.strokeStyle = wrapMode ? "rgba(74, 222, 128, 0.15)" : "rgba(45, 58, 79, 0.4)";
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i <= GRID; i++) {
+  if (isMobile || size < 8) {
+    ctx.fillRect(px, py, size, size);
+  } else {
     ctx.beginPath();
-    ctx.moveTo(i * CELL, 0);
-    ctx.lineTo(i * CELL, canvas.height);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, i * CELL);
-    ctx.lineTo(canvas.width, i * CELL);
-    ctx.stroke();
+    ctx.roundRect(px, py, size, size, 3);
+    ctx.fill();
   }
 }
 
 function render() {
-  drawGrid();
-  drawCell(food.x, food.y, "#f87171", "rgba(248, 113, 113, 0.5)");
+  ctx.drawImage(bgCanvas, 0, 0, logicalSize, logicalSize);
+  drawCell(food.x, food.y, "#f87171");
   snake.forEach((seg, i) => {
-    const isHead = i === 0;
-    drawCell(
-      seg.x,
-      seg.y,
-      isHead ? "#22c55e" : "#16a34a",
-      isHead ? "rgba(74, 222, 128, 0.4)" : null
-    );
+    drawCell(seg.x, seg.y, i === 0 ? "#22c55e" : "#16a34a");
   });
 }
 
-function loop(timestamp) {
-  if (state !== "running") return;
-
-  if (timestamp - lastTick >= speed) {
-    tick();
-    lastTick = timestamp;
-    render();
+function stopLoop() {
+  if (gameLoop) {
+    clearTimeout(gameLoop);
+    gameLoop = null;
   }
+}
 
-  gameLoop = requestAnimationFrame(loop);
+function restartLoop() {
+  stopLoop();
+  if (state === "running") {
+    gameLoop = setTimeout(step, speed);
+  }
+}
+
+function step() {
+  if (state !== "running") return;
+  tick();
+  if (state === "running") {
+    render();
+    gameLoop = setTimeout(step, speed);
+  }
 }
 
 function startGame() {
   initGame();
   state = "running";
   hideOverlay();
-  lastTick = 0;
   playStartSound();
   render();
-  cancelAnimationFrame(gameLoop);
-  gameLoop = requestAnimationFrame(loop);
+  restartLoop();
 }
 
 function gameOver() {
   state = "over";
-  cancelAnimationFrame(gameLoop);
+  stopLoop();
+  render();
 
   if (score > highScore) {
     highScore = score;
     saveHighScore(highScore);
     highScoreEl.textContent = highScore;
-    showOverlay("\u65b0\u7eaa\u5f55\uff01", `\u5f97\u5206 ${score}\uff0c\u6309\u7a7a\u683c\u518d\u6765\u4e00\u5c40`, "\u518d\u6765\u4e00\u5c40", true);
+    showOverlay("\u65b0\u7eaa\u5f55\uff01", `\u5f97\u5206 ${score}\uff0c\u70b9\u51fb\u518d\u6765\u4e00\u5c40`, "\u518d\u6765\u4e00\u5c40", true);
   } else {
-    showOverlay("\u6e38\u620f\u7ed3\u675f", `\u5f97\u5206 ${score}\uff0c\u6309\u7a7a\u683c\u518d\u6765\u4e00\u5c40`, "\u518d\u6765\u4e00\u5c40", true);
+    showOverlay("\u6e38\u620f\u7ed3\u675f", `\u5f97\u5206 ${score}\uff0c\u70b9\u51fb\u518d\u6765\u4e00\u5c40`, "\u518d\u6765\u4e00\u5c40", true);
   }
 }
 
 function togglePause() {
   if (state === "running") {
     state = "paused";
-    cancelAnimationFrame(gameLoop);
-    showOverlay("\u5df2\u6682\u505c", "\u6309\u7a7a\u683c\u7ee7\u7eed", "\u7ee7\u7eed", false);
+    stopLoop();
+    showOverlay("\u5df2\u6682\u505c", "\u70b9\u51fb\u7ee7\u7eed", "\u7ee7\u7eed", false);
   } else if (state === "paused") {
     state = "running";
     hideOverlay();
-    lastTick = performance.now();
-    gameLoop = requestAnimationFrame(loop);
+    restartLoop();
   }
 }
 
@@ -314,7 +362,7 @@ function showPlayHint() {
   if (location.protocol === "file:" || host === "localhost" || host === "127.0.0.1") {
     playUrlEl.classList.remove("hidden");
     playUrlEl.innerHTML =
-      "\u672c\u5730\u6d4b\u8bd5\u5730\u5740\uff1a<code>" + location.href + "</code><br>\u5206\u4eab\u7ed9\u670b\u53cb\u9700\u8981\u90e8\u7f72\u5230\u4e92\u8054\u7f51\uff0c\u89c1\u9879\u76ee\u91cc\u7684 deploy.sh";
+      "\u672c\u5730\u6d4b\u8bd5\u5730\u5740\uff1a<code>" + location.href + "</code>";
   } else {
     playUrlEl.classList.add("hidden");
   }
@@ -343,7 +391,7 @@ function setupSwipeControls() {
       const dy = touch.clientY - startY;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
-      if (Math.max(absX, absY) < 24) return;
+      if (Math.max(absX, absY) < 20) return;
 
       if (state === "idle" || state === "over") startGame();
 
@@ -355,6 +403,25 @@ function setupSwipeControls() {
     },
     { passive: true }
   );
+}
+
+function setupTouchButtons() {
+  const map = {
+    up: DIRECTIONS.ArrowUp,
+    down: DIRECTIONS.ArrowDown,
+    left: DIRECTIONS.ArrowLeft,
+    right: DIRECTIONS.ArrowRight,
+  };
+
+  document.querySelectorAll(".touch-btn").forEach((btn) => {
+    const handle = (e) => {
+      e.preventDefault();
+      if (state === "idle" || state === "over") startGame();
+      setDirection(map[btn.dataset.dir]);
+    };
+    btn.addEventListener("click", handle);
+    btn.addEventListener("touchstart", handle, { passive: false });
+  });
 }
 
 document.addEventListener("keydown", (e) => {
@@ -388,27 +455,37 @@ startBtn.addEventListener("click", () => {
 });
 
 [difficultyEl, wrapModeEl, soundEnabledEl].forEach((el) => {
-  el.addEventListener("change", saveSettings);
-});
-
-document.querySelectorAll(".touch-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const map = {
-      up: DIRECTIONS.ArrowUp,
-      down: DIRECTIONS.ArrowDown,
-      left: DIRECTIONS.ArrowLeft,
-      right: DIRECTIONS.ArrowRight,
-    };
+  el.addEventListener("change", () => {
+    saveSettings();
     if (state === "idle" || state === "over") {
-      startGame();
+      applySettings();
+      render();
     }
-    setDirection(map[btn.dataset.dir]);
   });
 });
 
+document.body.addEventListener(
+  "touchmove",
+  (e) => {
+    if (state === "running") e.preventDefault();
+  },
+  { passive: false }
+);
+
+let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    setupCanvas();
+    render();
+  }, 150);
+});
+
 loadSettings();
+setupCanvas();
 highScoreEl.textContent = loadHighScore();
 setupSwipeControls();
+setupTouchButtons();
 showPlayHint();
 showOverlay("\u8d2a\u5403\u86c7", "\u9009\u62e9\u8bbe\u7f6e\u540e\u5f00\u59cb\u6e38\u620f", "\u5f00\u59cb\u6e38\u620f", true);
 render();
