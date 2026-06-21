@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Idle Companion",
+  "version": "2.7.1",
+  "description": "屏幕无操作时显示拟真动物动画，Cat Gatekeeper 同款展示方式",
+  "permissions": ["storage", "activeTab"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Idle Companion 设置",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/sounds.js", "content/content.js"],
+      "css": ["content/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*", "content/gatekeeper.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

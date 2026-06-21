@@ -1,0 +1,82 @@
+<view class="page">
+  <!-- 顶部搜索与筛选 -->
+  <view class="header">
+    <view class="slogan">今天预算多少？地图告诉你去哪吃</view>
+    <scroll-view class="filters" scroll-x enhanced show-scrollbar="{{false}}">
+      <view
+        wx:for="{{filters}}"
+        wx:key="key"
+        class="filter-chip {{activeFilter === item.key ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onFilterTap"
+      >
+        {{item.label}}
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 地图 -->
+  <view class="map-wrap">
+    <map
+      id="shopMap"
+      class="map"
+      latitude="{{center.lat}}"
+      longitude="{{center.lng}}"
+      scale="{{scale}}"
+      markers="{{markers}}"
+      show-location
+      bindmarkertap="onMarkerTap"
+      bindregionchange="onRegionChange"
+    />
+    <view class="loc-btn" bindtap="moveToUser">
+      <text class="loc-icon">◎</text>
+    </view>
+    <view class="map-legend">
+      <view class="legend-item"><view class="dot green"></view>≤15</view>
+      <view class="legend-item"><view class="dot orange"></view>≤20</view>
+      <view class="legend-item"><view class="dot yellow"></view>≤30</view>
+    </view>
+  </view>
+
+  <!-- 列表面板 -->
+  <view class="list-panel">
+    <view class="list-header">
+      <text class="list-title">附近 {{shops.length}} 家</text>
+      <text class="list-sub" wx:if="{{locationLabel}}">{{locationLabel}}</text>
+    </view>
+
+    <scroll-view class="shop-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <view
+        wx:for="{{shops}}"
+        wx:key="id"
+        class="shop-card"
+        data-id="{{item.id}}"
+        bindtap="goDetail"
+      >
+        <view class="shop-top">
+          <view class="shop-name">{{item.name}}</view>
+          <view class="shop-price">¥{{item.fullMealPrice}}起</view>
+        </view>
+        <view class="shop-meta">
+          <text class="category">{{item.category}}</text>
+          <text wx:if="{{item.distanceText}}"> · {{item.distanceText}}</text>
+          <text wx:if="{{item.address}}"> · {{item.address}}</text>
+        </view>
+        <view class="shop-tags" wx:if="{{item.tags.length}}">
+          <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="tag tag-orange">{{tag}}</text>
+        </view>
+        <view class="shop-items">
+          <text wx:for="{{item.items}}" wx:for-item="dish" wx:key="name" class="dish">
+            {{dish.name}} ¥{{dish.price}}
+          </text>
+        </view>
+      </view>
+
+      <view wx:if="{{shops.length === 0}}" class="empty-state">
+        <text class="emoji">🍜</text>
+        <text>附近暂无符合条件的店</text>
+        <text class="empty-hint">试试放宽价格，或来投稿一家！</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

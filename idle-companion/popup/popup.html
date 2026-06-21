@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idle Companion</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header class="header">
+      <span class="logo">🐾</span>
+      <div>
+        <h1>Idle Companion</h1>
+        <p class="subtitle">空闲陪伴助手</p>
+      </div>
+    </header>
+
+    <label class="toggle-row">
+      <span>启用插件</span>
+      <input type="checkbox" id="enabled" checked>
+      <span class="switch"></span>
+    </label>
+
+    <section class="section">
+      <h2>时间设置</h2>
+
+      <label class="field">
+        <span class="field-label">空闲多久后出现</span>
+        <div class="field-input">
+          <input type="number" id="idleMinutes" min="1" max="120" value="5">
+          <span class="unit">分钟</span>
+        </div>
+        <span class="field-hint">无鼠标、键盘、滚动等操作后开始计时</span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">出现后停留多久</span>
+        <div class="field-input">
+          <input type="number" id="displayMinutes" min="1" max="60" value="3">
+          <span class="unit">分钟</span>
+        </div>
+        <span class="field-hint">停留结束后自动消失；刷新页面也会消失</span>
+      </label>
+    </section>
+
+    <section class="section">
+      <h2>角色选择</h2>
+
+      <div class="character-grid">
+        <label class="character-card selected" data-character="whale">
+          <input type="radio" name="character" value="whale" checked>
+          <span class="char-icon">🐋</span>
+          <span class="char-name">蓝鲸</span>
+          <span class="char-desc">跃入 · 喷水 · 呼吸</span>
+        </label>
+        <label class="character-card" data-character="fox">
+          <input type="radio" name="character" value="fox">
+          <span class="char-icon">🦊</span>
+          <span class="char-name">狐狸</span>
+          <span class="char-desc">跳入 · 张望 · 摆尾</span>
+        </label>
+        <label class="character-card" data-character="cat">
+          <input type="radio" name="character" value="cat">
+          <span class="char-icon">🐱</span>
+          <span class="char-name">猫咪</span>
+          <span class="char-desc">全屏挡屏 · 舔毛循环</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>显示与音效</h2>
+      <label class="toggle-row">
+        <span>显示空闲倒计时</span>
+        <input type="checkbox" id="showCountdown" checked>
+        <span class="switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span>出场音效</span>
+        <input type="checkbox" id="soundEnabled" checked>
+        <span class="switch"></span>
+      </label>
+    </section>
+
+    <section class="section">
+      <h2>网站白名单</h2>
+      <label class="toggle-row">
+        <span>仅在白名单网站生效</span>
+        <input type="checkbox" id="whitelistEnabled">
+        <span class="switch"></span>
+      </label>
+      <p class="field-hint section-hint">开启后，只有下方列表中的网站会触发陪伴动画</p>
+
+      <div class="whitelist-add">
+        <input type="text" id="whitelistInput" placeholder="如 github.com 或 *.google.com">
+        <button type="button" id="addSiteBtn" class="btn-sm">添加</button>
+      </div>
+      <button type="button" id="addCurrentBtn" class="btn-outline">+ 添加当前网站</button>
+
+      <ul class="whitelist-list" id="whitelistList"></ul>
+    </section>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

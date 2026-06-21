@@ -1,0 +1,77 @@
+<view class="page" wx:if="{{shop}}">
+  <view class="hero">
+    <view class="hero-name">{{shop.name}}</view>
+    <view class="hero-price">
+      <text class="price-num">¥{{shop.fullMealPrice}}</text>
+      <text class="price-label"> 起吃饱</text>
+    </view>
+    <view class="hero-meta">
+      <text>{{shop.category}}</text>
+      <text wx:if="{{distanceText}}"> · {{distanceText}}</text>
+    </view>
+    <view class="hero-tags" wx:if="{{shop.tags.length}}">
+      <text wx:for="{{shop.tags}}" wx:key="*this" class="tag tag-orange">{{item}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">菜单价格</view>
+    <view class="menu-list">
+      <view wx:for="{{shop.items}}" wx:key="name" class="menu-item">
+        <view class="menu-left">
+          <text class="menu-name">{{item.name}}</text>
+          <text wx:if="{{item.verifiedCount >= 2}}" class="tag tag-green">✓ {{item.verifiedCount}}人核实</text>
+          <text wx:else class="tag tag-gray">待核实</text>
+        </view>
+        <view class="menu-right">
+          <text class="menu-price">¥{{item.price}}</text>
+          <view class="verify-btn" data-index="{{index}}" bindtap="onVerify">核实</view>
+        </view>
+      </view>
+    </view>
+    <view class="meal-tip" wx:if="{{mealTip}}">
+      💡 最便宜吃饱：{{mealTip}}
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{shop.address}}">
+    <view class="section-title">地址</view>
+    <text class="address">{{shop.address}}</text>
+  </view>
+
+  <view class="section" wx:if="{{shop.tips}}">
+    <view class="section-title">抠门贴士</view>
+    <text class="tips">{{shop.tips}}</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn-primary action-btn" bindtap="openMap">导航去这</button>
+    <button class="btn-outline action-btn" bindtap="showReport">报涨价/关门</button>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="emoji">😶</text>
+  <text>店铺不存在</text>
+</view>
+
+<!-- 举报弹层 -->
+<view class="mask" wx:if="{{showReportPanel}}" bindtap="hideReport">
+  <view class="report-panel" catchtap="">
+    <view class="report-title">反馈信息</view>
+    <view
+      wx:for="{{reportTypes}}"
+      wx:key="*this"
+      class="report-option {{reportType === item ? 'selected' : ''}}"
+      data-type="{{item}}"
+      bindtap="selectReportType"
+    >{{item}}</view>
+    <textarea
+      class="report-note"
+      placeholder="补充说明（可选）"
+      value="{{reportNote}}"
+      bindinput="onReportNoteInput"
+    />
+    <button class="btn-primary" bindtap="submitReport">提交反馈</button>
+  </view>
+</view>

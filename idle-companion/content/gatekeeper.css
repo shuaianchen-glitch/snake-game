@@ -1,0 +1,79 @@
+/* Gatekeeper — 全屏挡屏：cover 贴底，动物占满视口高度 */
+
+#ic-gk-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: transparent !important;
+  z-index: 2147483647 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+}
+
+.ic-gk-stage {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+
+.ic-gk-stage.ic-gk-entering {
+  animation: ic-gk-slide-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+@keyframes ic-gk-slide-in {
+  from { transform: translateX(105vw) !important; }
+  to { transform: translateX(0) !important; }
+}
+
+#ic-gk-overlay video {
+  display: block !important;
+  position: relative !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  transform: none !important;
+  image-rendering: auto !important;
+}
+
+#ic-gk-countdown {
+  position: fixed !important;
+  top: 0 !important;
+  left: 23% !important;
+  transform: translateX(-50%) !important;
+  z-index: 3 !important;
+  font-size: clamp(80px, 14vw, 140px) !important;
+  font-weight: bold !important;
+  color: #fff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 20px !important;
+  padding: 32px 42px !important;
+  line-height: 1 !important;
+  font-variant-numeric: tabular-nums !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+}
+
+.ic-gk-hero {
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}

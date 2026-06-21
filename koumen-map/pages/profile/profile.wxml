@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="profile-header">
+    <view class="avatar">抠</view>
+    <view class="profile-info">
+      <text class="nickname">抠门人</text>
+      <text class="subtitle">省钱是一种生活态度</text>
+    </view>
+  </view>
+
+  <view class="coin-card">
+    <text class="coin-label">我的抠抠币</text>
+    <text class="coin-num">{{coins}}</text>
+    <text class="coin-hint">核实价格 +5 · 投稿 +20 · 反馈 +3</text>
+  </view>
+
+  <view class="stats">
+    <view class="stat-item">
+      <text class="stat-num">{{stats.submitCount}}</text>
+      <text class="stat-label">投稿</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{stats.verifyCount}}</text>
+      <text class="stat-label">核实</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{stats.reportCount}}</text>
+      <text class="stat-label">反馈</text>
+    </view>
+  </view>
+
+  <view class="menu-list">
+    <view class="menu-item" bindtap="goSubmit">
+      <text>📝 投稿平价好店</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="showAbout">
+      <text>ℹ️ 关于抠门地图</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="clearData">
+      <text>🗑️ 清除本地数据</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="footer-note">
+    当前为 MVP 版本，数据保存在本地。正式上线后将接入云端同步。
+  </view>
+</view>

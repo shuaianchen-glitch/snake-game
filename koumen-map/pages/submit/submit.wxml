@@ -1,0 +1,70 @@
+<view class="page">
+  <view class="intro">
+    <text class="intro-title">发现平价好店？</text>
+    <text class="intro-desc">投稿帮助更多抠门人，每条审核通过 +20 抠抠币</text>
+  </view>
+
+  <view class="form">
+    <view class="field">
+      <text class="label">店名 *</text>
+      <input class="input" placeholder="如：老张兰州拉面" value="{{name}}" bindinput="onInput" data-field="name" />
+    </view>
+
+    <view class="field">
+      <text class="label">分类</text>
+      <view class="chips">
+        <view
+          wx:for="{{categories}}"
+          wx:key="*this"
+          class="chip {{category === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="onCategoryTap"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">地址</text>
+      <input class="input" placeholder="街道门牌号" value="{{address}}" bindinput="onInput" data-field="address" />
+    </view>
+
+    <view class="field">
+      <text class="label">位置 *</text>
+      <view class="loc-row">
+        <text class="loc-text" wx:if="{{latitude}}">{{latitude}}, {{longitude}}</text>
+        <text class="loc-text muted" wx:else>点击选择地图位置</text>
+        <view class="loc-pick" bindtap="pickLocation">选点</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">菜品与价格 *</text>
+      <view wx:for="{{items}}" wx:key="index" class="item-row">
+        <input class="input item-name" placeholder="菜名" value="{{item.name}}" data-index="{{index}}" bindinput="onItemNameInput" />
+        <input class="input item-price" type="digit" placeholder="价格" value="{{item.price}}" data-index="{{index}}" bindinput="onItemPriceInput" />
+        <view wx:if="{{items.length > 1}}" class="remove" data-index="{{index}}" bindtap="removeItem">×</view>
+      </view>
+      <view class="add-item" bindtap="addItem">+ 添加菜品</view>
+    </view>
+
+    <view class="field">
+      <text class="label">抠门贴士</text>
+      <textarea class="textarea" placeholder="如：11:30前去不用排队" value="{{tips}}" bindinput="onInput" data-field="tips" />
+    </view>
+
+    <view class="field">
+      <text class="label">标签</text>
+      <view class="chips">
+        <view
+          wx:for="{{allTags}}"
+          wx:key="*this"
+          class="chip {{tags.indexOf(item) >= 0 ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="onTagTap"
+        >{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-primary submit-btn" bindtap="onSubmit">提交投稿</button>
+</view>

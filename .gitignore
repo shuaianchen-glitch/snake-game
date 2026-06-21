@@ -1,1 +1,6 @@
 .DS_Store
+
+# Idle Companion 生成中间文件（勿提交）
+idle-companion/assets/*_tmp/
+idle-companion/assets/_*
+idle-companion/assets/*.webm_tmp/

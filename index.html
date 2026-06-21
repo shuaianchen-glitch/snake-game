@@ -2,80 +2,67 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="description" content="在线贪吃蛇小游戏，支持手机和电脑，多种难度可选。">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Side projects：在线小游戏与浏览器扩展。">
   <meta name="theme-color" content="#0f1419">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta property="og:title" content="贪吃蛇">
-  <meta property="og:description" content="来挑战一下，看看你能得多少分！">
-  <meta property="og:type" content="website">
-  <title>贪吃蛇</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Projects</title>
+  <link rel="stylesheet" href="site.css">
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>🐍 贪吃蛇</h1>
-      <div class="stats">
-        <div class="stat">
-          <span class="stat-label">得分</span>
-          <span id="score" class="stat-value">0</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">最高</span>
-          <span id="high-score" class="stat-value">0</span>
-        </div>
+  <header class="site-header">
+    <h1>Projects</h1>
+    <p>项目源码与演示页。个人官网：<a href="https://shuaianchen-glitch.github.io/">shuaianchen-glitch.github.io</a></p>
+  </header>
+
+  <main class="projects">
+    <article class="project-card">
+      <div class="project-icon">🐱</div>
+      <h2>Idle Companion</h2>
+      <p>浏览器空闲时，透明抠图动物全屏挡在页面上陪你 —— 对标 Cat Gatekeeper 风格。支持猫咪 / 蓝鲸 / 狐狸，可设白名单与倒计时。</p>
+      <div class="project-tags">
+        <span class="tag">Chrome 扩展</span>
+        <span class="tag">Manifest V3</span>
+        <span class="tag">WebM Alpha</span>
       </div>
-    </header>
-
-    <main class="game-area">
-      <canvas id="game" aria-label="贪吃蛇游戏区域"></canvas>
-
-      <div id="overlay" class="overlay">
-        <div class="overlay-content">
-          <h2 id="overlay-title">贪吃蛇</h2>
-          <p id="overlay-message">选择设置后开始游戏</p>
-
-          <div class="settings">
-            <label class="setting">
-              <span>难度</span>
-              <select id="difficulty">
-                <option value="easy">简单</option>
-                <option value="normal" selected>普通</option>
-                <option value="hard">困难</option>
-              </select>
-            </label>
-            <label class="setting toggle">
-              <span>穿墙模式</span>
-              <input type="checkbox" id="wrap-mode">
-            </label>
-            <label class="setting toggle">
-              <span>音效</span>
-              <input type="checkbox" id="sound-enabled" checked>
-            </label>
-          </div>
-
-          <button id="start-btn" class="btn">开始游戏</button>
-          <p id="play-url" class="play-url hidden"></p>
-        </div>
+      <div class="project-actions">
+        <a class="btn btn-primary" href="idle-companion/">查看项目</a>
       </div>
-    </main>
+    </article>
 
-    <footer class="controls">
-      <p class="hint">方向键 / WASD 移动 · 空格暂停</p>
-      <p class="mobile-hint">滑动屏幕或点击下方按钮控制方向</p>
-      <div class="touch-controls" aria-hidden="true">
-        <div class="dpad">
-          <button class="touch-btn" data-dir="up" aria-label="向上">▲</button>
-          <button class="touch-btn" data-dir="left" aria-label="向左">◀</button>
-          <button class="touch-btn" data-dir="down" aria-label="向下">▼</button>
-          <button class="touch-btn" data-dir="right" aria-label="向右">▶</button>
-        </div>
+    <article class="project-card">
+      <div class="project-icon">🐍</div>
+      <h2>贪吃蛇</h2>
+      <p>在线贪吃蛇，支持手机与电脑，多种难度、穿墙模式与本地最高分记录。</p>
+      <div class="project-tags">
+        <span class="tag">Web 游戏</span>
+        <span class="tag">Canvas</span>
+        <span class="tag">移动端</span>
       </div>
-    </footer>
-  </div>
+      <div class="project-actions">
+        <a class="btn btn-primary" href="snake/">开始玩</a>
+      </div>
+    </article>
 
-  <script src="game.js"></script>
+    <article class="project-card">
+      <div class="project-icon">🗺️</div>
+      <h2>扣门地图</h2>
+      <p>微信小程序 —— 分享与发现「扣门」地点（仓库内源码，需微信开发者工具打开）。</p>
+      <div class="project-tags">
+        <span class="tag">微信小程序</span>
+      </div>
+      <div class="project-actions">
+        <a class="btn btn-ghost" href="https://github.com/shuaianchen-glitch/snake-game/tree/main/koumen-map" rel="noopener">GitHub 源码</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      官方网站 ·
+      <a href="https://shuaianchen-glitch.github.io/" rel="noopener">shuaianchen-glitch.github.io</a>
+      ·
+      <a href="https://github.com/shuaianchen-glitch/snake-game" rel="noopener">GitHub</a>
+    </p>
+  </footer>
 </body>
 </html>

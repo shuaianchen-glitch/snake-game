@@ -1,0 +1,87 @@
+page {
+  --primary: #ff6b35;
+  --primary-light: #fff0ea;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border: #f0ebe4;
+  --bg: #fff8f0;
+  --card: #ffffff;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+.container {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  line-height: 88rpx;
+  padding: 0 48rpx;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-outline {
+  background: #fff;
+  color: var(--primary);
+  border: 2rpx solid var(--primary);
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+  padding: 0 40rpx;
+}
+
+.btn-outline::after {
+  border: none;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  line-height: 1.6;
+}
+
+.tag-green {
+  background: #e8f8ef;
+  color: #27ae60;
+}
+
+.tag-orange {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.tag-gray {
+  background: #f5f5f5;
+  color: var(--text-muted);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80rpx 40rpx;
+  color: var(--text-muted);
+}
+
+.empty-state .emoji {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 24rpx;
+}
